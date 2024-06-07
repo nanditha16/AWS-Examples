@@ -2,13 +2,13 @@
 A codebase for AWS study
 
 # gitpod commands samples
-gp init
+gp init, 
 env 
 
 # aws commands samples
-aws
-aws configure
-aws sts get-caller-identity
+aws, 
+aws configure, 
+aws sts get-caller-identity, 
 aws s3 ls
 
 # AWS References
