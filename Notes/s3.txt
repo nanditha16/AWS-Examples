@@ -1,0 +1,168 @@
+- Object based storage , stored flatly
+- Provides
+    *unlimited storage
+    serverless service
+    collwct store and analyse
+- Components
+    S3 Objects
+        Objects contain data
+        Objects may be of Key(name of the Object), Value(data in sequence of bytes)
+        Version Id
+        Metadata
+    S3 Buckets
+        Holds Objects
+        can also have folders which in turn hold Objects
+        S3 is a universal namespace so bucket names must be unique 
+            
+- Capacity: 0 Bytes to 5 Terabytes in size
+
+- Pricing: [https://aws.amazon.com/s3/pricing/?nc=sn&loc=4]
+    With S3, there are no minimum fees. You only pay for what you use. Prices are based on the location of your S3 bucket.
+- Rating: The rate you’re charged depends on 
+    your objects' size, 
+    the ingest or transition cost or Retrieval fees-
+        There are per-request ingest charges when using PUT, COPY, or lifecycle rules to move data into any S3 storage class, 
+    how long you stored the objects during the month, and 
+    the storage class— at object level
+        S3 Express One Zone
+            : Single-digit millisecond response times for the most frequently accessed data.
+            : Directory bucket type
+        S3 Standard
+            : Frequently accessed data (more than once a month) with milliseconds access
+        S3 Intelligent-Tiering
+            : Data with changing or unknown access patterns
+            : pay a monthly monitoring and automation charge per object stored to monitor access patterns and move objects between access tiers. 
+            : there are no retrieval charges, and no additional tiering charges apply when objects are moved between access tiers
+        S3 Standard-Infrequent Access
+            : Infrequently accessed data (once a month) with milliseconds access
+            : min storgae duration - 30 days
+            : Min billable object size - 128 KB
+            : Retrieval fees - Per-GB fees apply
+        S3 One Zone-Infrequent Access
+            : Recreatable, infrequently accessed data (once a month) stored in a single Availability Zone with milliseconds access
+            : min storgae duration - 30 days
+            : Min billable object size - 128 KB
+            : Retrieval fees - Per-GB fees apply
+        S3 Glacier Instant Retrieval
+            : Long-lived archive data accessed once a quarter with instant retrieval in milliseconds
+            : min storgae duration - 90 days
+            : Min billable object size - 128 KB
+            : Retrieval fees - Per-GB fees apply
+        S3 Glacier Flexible Retrieval (Formerly S3 Glacier)
+            : Long-lived archive data accessed once a year with retrieval of minutes to hours
+            : min storgae duration - 90 days
+            : Retrieval fees - Per-GB fees apply
+        S3 Glacier Deep Archive
+            : Long-lived archive data accessed less than once a year with retrieval of hours
+            : min storgae duration - 180 days
+            : Retrieval fees - Per-GB fees apply
+        Reduced redundancy
+            : Noncritical, frequently accessed data with milliseconds access (not recommended as S3 Standard is more cost effective)
+            : Retrieval fees - Per-GB fees apply
+
+- S3 AWS CLI samples basics [AWS_CLI_AUTO_PROMPT=on-partial]
+    aws [options] s3 <subcommand> [parameters]
+    Example: > aws s3 ls
+    Example: > aws s3 rb s3://aws-practice-nan1
+
+> aws s3 rb s3://aws-practice-nan1
+remove_bucket failed: s3://aws-practice-nan1 An error occurred (BucketNotEmpty) when calling the DeleteBucket operation: The bucket you tried to delete is not empty
+ Example: >aws s3 rm s3://aws-practice-nan1 --recursive 
+delete: s3://aws-practice-nan1/images/
+ Example: >aws s3 ls s3://aws-practice-nan1 
+ Example: >aws s3 rb s3://aws-practice-nan1
+remove_bucket: aws-practice-nan1
+ Example: >aws s3 ls
+
+ Example: >aws s3api create-bucket --bucket aws-practice-nan2 
+{
+    "Location": "/aws-practice-nan2"
+}
+
+ Example: >aws s3api list-buckets --query Buckets
+[
+    {
+        "Name": "aws-practice-nan2",
+        "CreationDate": "2024-06-08T16:07:33+00:00"
+    }
+]
+
+ Example: >aws s3api list-buckets --query Buckets[].Name
+[
+    "aws-practice-nan2"
+]
+
+ Example: >aws s3api list-buckets --query Buckets[].Name --output text
+aws-practice-nan2
+
+ Example: >aws s3api list-buckets --query Buckets[].Name --output table
+-----------------------
+|     ListBuckets     |
++---------------------+
+|  aws-practice-nan2  |
++---------------------+
+
+ Example: >aws s3api list-buckets --query "Buckets[?Name == 'aws-practice-nan2'].Name" --output yaml
+- aws-practice-nan2
+
+to download from S3:
+ Example: >ls
+ Example: >aws s3 ls 
+2024-06-08 16:07:33 aws-practice-nan2
+ Example: >aws s3 ls s3://aws-practice-nan2
+2024-06-08 16:25:48  206515268 HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+ Example: > aws s3api get-object --bucket aws-practice-nan2 --key HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+{
+    "AcceptRanges": "bytes",
+    "LastModified": "2024-06-08T16:25:48+00:00",
+    "ContentLength": 206515268,
+    "ETag": "\"a7ff845902d9bc1aea4f05f9e33627ef-25\"",
+    "ContentType": "binary/octet-stream",
+    "ServerSideEncryption": "AES256",
+    "Metadata": {}
+}
+ Example: >ls
+HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+
+
+To upload a file :
+ Example: >ls
+HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+ Example: >aws s3 ls s3://aws-practice-nan2
+ Example: >aws s3api put-object --bucket aws-practice-nan2 --key HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax --body HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+{
+    "ETag": "\"2e76e61c9829a43bf734811ad8ac8bae\"",
+    "ServerSideEncryption": "AES256"
+}
+ Example: >aws s3 ls s3://aws-practice-nan2
+2024-06-08 16:42:47  206515268 HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+
+listing: 
+- local linux
+ Example: > ls
+HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+- on s3 using aws s3 
+ Example: >aws s3 ls s3://aws-practice-nan2
+2024-06-08 16:42:47  206515268 HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax
+- on s3 using aws s3api
+ Example: >aws s3api list-objects --bucket aws-practice-nan2 --query Contents
+[
+    {
+        "Key": "HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax",
+        "LastModified": "2024-06-08T16:42:47+00:00",
+        "ETag": "\"2e76e61c9829a43bf734811ad8ac8bae\"",
+        "Size": 206515268,
+        "StorageClass": "STANDARD",
+        "Owner": {
+            "DisplayName": "cloudshared.2023",
+            "ID": "60e294cd7cecc6fd5167760a1b470b636aa4794d7f83d0d18cce9be4ec21bfaa"
+        }
+    }
+]
+- on s3 using aws s3api for only specific details like just filenames 
+ Example: >aws s3api list-objects --bucket aws-practice-nan2 --query Contents[].Key
+[
+    "HealingAchievingTotalWellnessThroughHigherLevelsofConsciousness_ep6.aax"
+]
+
+
