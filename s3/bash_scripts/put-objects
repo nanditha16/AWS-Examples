@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e 
+
+
+# Check if the First - bucket name and/or second - filepath  argument not provided
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "First - bucket name and/or second - filepath argument not provided."
+else
+    echo "First argument - bucket name: $1"
+    echo "Second argument - filepath: $2"
+fi
+
+BUCKET_NAME=$1;
+FILE_FULLPATH=$2;
+
+# Check if the FILE_FULLPATH exists
+if [ -e "$FILE_FULLPATH" ]; then
+    # Check if it's a regular file
+    if [ -f "$FILE_FULLPATH" ]; then
+        echo "$FILE_FULLPATH is a regular file."
+    # Check if it's a directory
+    elif [ -d "$FILE_FULLPATH" ]; then
+        echo "$FILE_FULLPATH is a directory."
+    else
+        echo "$FILE_FULLPATH is neither a file nor a directory."
+        exit
+    fi
+else
+    echo "$FILE_FULLPATH does not exist."
+    exit 
+fi
+
+
+OBJECT_kEY=$(basename "$FILE_FULLPATH") 
+aws s3api put-object \
+--bucket $BUCKET_NAME \
+--body $FILE_FULLPATH \
+--key $OBJECT_kEY
+if [ $? -eq 0 ]; then
+    echo "put-objects executed successfully."
+else
+    echo "put-objects failed with exit code $?."
+fi

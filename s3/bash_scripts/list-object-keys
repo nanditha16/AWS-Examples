@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+echo "== list objects in a bucket"
+
+# Check if the first argument is provided
+if [ -z "$1" ]; then
+    echo "No bucket name provided. It should be unique. usage ./create-bucket my-bucket-name"
+else
+    echo "bucket name provided: $1"
+fi
+
+BUCKET_NAME=$1;
+
+aws s3api list-objects --bucket $BUCKET_NAME --query Contents[].Key
+ 
+ 

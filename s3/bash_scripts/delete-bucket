@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Uage: ./delete-bucket aws-practice-nan3
+#
+#
+
+# Check if the first argument is provided
+if [ -z "$1" ]; then
+    echo "No bucket name provided. It should be unique. usage ./delete-bucket my-bucket-name"
+else
+    echo "bucket name provided: $1"
+fi
+
+BUCKET_NAME=$1;
+aws s3api delete-bucket --bucket $BUCKET_NAME
+
+if [ $? -eq 0 ]; then
+    echo "delete-bucket executed successfully."
+else
+    echo "delete-bucket failed with exit code $?."
+fi

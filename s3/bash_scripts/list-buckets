@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+echo "== list buckets"
+
+# Check if the first argument is provided
+if [ -z "$1" ]; then
+    echo "You can also provide an option. usage ./list-bucket [options: [sort limit]]"
+    aws s3 ls 
+    # aws s3api list-buckets
+else
+    echo "list option provided: $1"
+fi
+
+
+# Check for specific arguments
+if [ "$1" == "sort" ]; then
+    echo "Option "sort" selected i.e, list objects sort by creation date"
+    aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[] | .Name'
+elif [ "$1" == "limit" ]; then
+    echo "Option "limit" selected i.e, list objects sort by creation date and limit to top 2"
+    aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0:2] | .[] | .Name'
+    echo "..."
+fi
+

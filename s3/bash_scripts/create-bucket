@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Uage: ./create-bucket aws-practice-nan3
+# Output: bucket name provided: aws-practice-nan3
+#{
+#    "Location": "/aws-practice-nan3"
+#}
+#
+#
+
+# Check if the first argument is provided
+if [ -z "$1" ]; then
+    echo "No bucket name provided. It should be unique. usage ./create-bucket my-bucket-name"
+else
+    echo "bucket name provided: $1"
+fi
+
+BUCKET_NAME=$1;
+aws s3api create-bucket --bucket $BUCKET_NAME 
+
+if [ $? -eq 0 ]; then
+    echo "create-bucket executed successfully."
+else
+    echo "create-bucket failed with exit code $?."
+fi

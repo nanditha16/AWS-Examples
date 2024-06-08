@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e 
+
+# Check if the first argument is provided
+if [ -z "$1" ]; then
+    echo "No bucket name provided. It should be unique. usage ./create-bucket my-bucket-name"
+else
+    echo "bucket name provided: $1"
+fi
+
+BUCKET_NAME=$1;
+
+# To create a temporary delete json file which is required for delete-objects 
+aws s3api list-objects-v2 \
+ --bucket $BUCKET_NAME \
+ --query Contents[].Key \
+| jq -n '{Objects: [inputs | .[] | {Key: .}]}' > /tmp/delete_objects.json
+
+aws s3api delete-objects --bucket $BUCKET_NAME --delete file:///tmp/delete_objects.json
+rm /tmp/delete_objects.json
