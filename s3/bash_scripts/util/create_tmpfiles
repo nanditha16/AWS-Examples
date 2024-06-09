@@ -15,11 +15,17 @@ set -e
 # temporary directory
 OUTPUT_DIR="/tmp/s3-bash-scripts"
 
-# remove the folder if already existis
-rm -r $OUTPUT_DIR
+# Check if the directory exists
+if [ -d "$OUTPUT_DIR" ]; then
+    echo "$OUTPUT_DIR already exists. Hence deleting "
+    # remove the folder if already existis
+    rm -r $OUTPUT_DIR
+else
+    echo "$OUTPUT_DIR does not exist. Hence creating "
+    # create the output folder
+    mkdir -p $OUTPUT_DIR
+fi
 
-# create the output folder
-mkdir -p $OUTPUT_DIR
 
 # Generate a random number between 5 and 10 to determine how many files to create
 NUM_FILES=$((RANDOM % 6 + 5))

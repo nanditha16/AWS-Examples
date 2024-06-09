@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# single object uplaoding to s3 
 # Exit immediately if any command returns a non-zero status
 set -e 
 
@@ -22,7 +23,8 @@ if [ -e "$FILE_FULLPATH" ]; then
         echo "$FILE_FULLPATH is a regular file."
     # Check if it's a directory
     elif [ -d "$FILE_FULLPATH" ]; then
-        echo "$FILE_FULLPATH is a directory."
+        echo "$FILE_FULLPATH is a directory. '--body': values must be a path to a file and --key should be the file"
+        exit 
     else
         echo "$FILE_FULLPATH is neither a file nor a directory."
         exit

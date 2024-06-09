@@ -1,40 +1,43 @@
 #!/usr/bin/env bash
 
-# Check if the First - bucket name and/or second - filepath  argument not provided
+# multiple object uplaoding to s3 
+# Check if the First - bucket name and/or second - files uploaded from filepath  argument not provided
 if [ -z "$1" ] || [ -z "$2" ]; then
-    echo "First - bucket name and/or second - filepath argument not provided."
+    echo "First - bucket name and/or second - files uploaded from filepath argument not provided."
 else
     echo "First argument - bucket name: $1"
-    echo "Second argument - filepath: $2"
+    echo "Second argument - files uploaded from filepath: $2"
 fi
 
 BUCKET_NAME=$1;
-FILE_FULLPATH=$2;
+SOURCE_DIR=$2;
 
 # Check if the FILE_FULLPATH exists
-if [ -e "$FILE_FULLPATH" ]; then
+if [ -e "$SOURCE_DIR" ]; then
     # Check if it's a regular file
-    if [ -f "$FILE_FULLPATH" ]; then
-        echo "$FILE_FULLPATH is a regular file."
+    if [ -f "$SOURCE_DIR" ]; then
+        echo "$SOURCE_DIR is a regular file. has to be the path where files are available to upload"
+        exit
     # Check if it's a directory
-    elif [ -d "$FILE_FULLPATH" ]; then
-        echo "$FILE_FULLPATH is a directory."
+    elif [ -d "$SOURCE_DIR" ]; then
+        echo "$SOURCE_DIR is a directory."
     else
-        echo "$FILE_FULLPATH is neither a file nor a directory."
+        echo "$SOURCE_DIR is neither a file nor a directory."
         exit 
     fi
 else
-    echo "$FILE_FULLPATH does not exist."
+    echo "$SOURCE_DIR does not exist."
     exit 
 fi
 
 # Exit immediately if any command returns a non-zero status
 set -e 
 
-  echo "Files in $FILE_FULLPATH to be uplodaded to s3 bucket $BUCKET_NAME:"
-tree $OUTPUT_DIR
+  echo "Files in $SOURCE_DIR to be uplodaded to s3 bucket $BUCKET_NAME:"
+ls $SOURCE_DIR
 
-aws s3 sync $FILE_FULLPATH s3://$BUCKET_NAME/files
+# "files" destination folder is hardcoded
+aws s3 sync $SOURCE_DIR s3://$BUCKET_NAME/files
 if [ $? -eq 0 ]; then
     echo "sync  executed successfully."
 else

@@ -1,1 +1,37 @@
 #!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e 
+
+
+# Check if the First - bucket name and/or second -  files uploaded to filepath  argument not provided
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "First - bucket name and/or second -  files uploaded to filepath argument not provided."
+else
+    echo "First argument - bucket name: $1"
+    echo "Second argument -  files uploaded to filepath: $2"
+fi
+
+BUCKET_NAME=$1;
+DESTINATION_DIR=$2;
+
+# List objects in the S3 bucket
+OBJECT_KEYS=$(aws s3api list-objects --bucket "$BUCKET_NAME" --query 'Contents[].Key' --output text) 
+
+# Loop through the list of objects 
+#  NOTE: Reading from destination folders will be part of OBJECT_KEYS. Example: "files/aws_pract_6.txt"
+#  NOTE: The corresponding folder structure should be available in DESTINATION_DIR as well. Example : "/tmp/destination/files"
+for object in $OBJECT_KEYS; do
+    # Download the object from S3 bucket
+    FOLDER_NAME=$(dirname "$object")
+   
+   # Check if the directory exists
+    if [ -e "$DESTINATION_DIR/$FOLDER_NAME" ]; then
+        echo "$DESTINATION_DIR/$FOLDER_NAME exists."
+    else
+        echo "$DESTINATION_DIR/$FOLDER_NAME does not exist. Creating..."
+        mkdir -p "$DESTINATION_DIR/$FOLDER_NAME"
+    fi
+    aws s3api get-object --bucket "$BUCKET_NAME" --key "$object" "$DESTINATION_DIR/$object"
+done
+
