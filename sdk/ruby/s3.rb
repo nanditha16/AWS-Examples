@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# reference https://docs.aws.amazon.com/sdk-for-ruby/v3/api/Aws/S3/Client.html#create_bucket-instance_method
 
 # Required libraries
 require 'aws-sdk-s3'   # AWS SDK for S3
