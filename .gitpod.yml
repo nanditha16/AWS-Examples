@@ -17,6 +17,15 @@ tasks:
       rm packages-microsoft-prod.deb
       sudo apt-get update
       sudo apt-get install -y powershell
+# List of tasks: https://www.gitpod.io/docs/config-tasks/
+  - name: Install AWS Tools for PowerShell
+    init: |
+      # Install AWS Tools for PowerShell module
+      pwsh -Command "Install-Module -Name AWS.Tools.S3 -Force -AllowClobber"
+  - name: Import AWS Tools for PowerShell module
+    init: |
+      # Import AWS Tools for PowerShell module
+      pwsh -Command "Import-Module AWS.Tools.S3"
   - name: aws-cli
     env:
       AWS_CLI_AUTO_PROMPT: on-partial
