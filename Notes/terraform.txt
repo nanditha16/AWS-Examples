@@ -19,3 +19,10 @@ https://registry.terraform.io/providers/hashicorp/aws/latest
     - Apply: On approval, Terraform performs the proposed operations in the correct order, respecting any resource dependencies. 
         For example, if you update the properties of a VPC and change the number of virtual machines in that VPC,
              Terraform will recreate the VPC before scaling the virtual machines.
+
+Commands samples:
+
+terraform init
+terraform plan
+terraform apply
+terraform destroy
