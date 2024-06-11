@@ -1,6 +1,8 @@
 Automate Infrastructure on Any Cloud usong terraform
 https://www.terraform.io/
 https://developer.hashicorp.com/terraform/intro
+https://registry.terraform.io/providers/hashicorp/aws/latest
+
 
 - Terraform is an infrastructure as code tool that lets you build, change, and version infrastructure safely and efficiently.
 - HashiCorp Terraform is an infrastructure as code tool that lets you define both cloud and on-prem resources
