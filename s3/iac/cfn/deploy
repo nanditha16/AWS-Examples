@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+echo "=== Deploy S3 bucket via CloudFormation (CFN)"
+# https://awscli.amazonaws.com/v2/documentation/api/latest/reference/cloudformation/deploy.html
+
+STACK_NAME="cfn-s3-simple-stack"
+
+aws cloudformation delete-stack \
+    --template-file template.yaml \
+    --no-execute-changeset \
+    --region us-east-1 \
+    --stack-name $STACK_NAME 

@@ -1,0 +1,9 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A sample S3 bucket template
+Resources:
+  S3Bucket:
+  # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-s3-bucket.html
+    Type: 'AWS::S3::Bucket'
+  #  No need to provide bucket name, default name will be generated with random name by AWS
+    # Properties:
+    #   BucketName: aws-parctice-nan1

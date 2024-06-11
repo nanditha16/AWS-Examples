@@ -1,0 +1,13 @@
+AWS CloudFormation Serverless Application Model (SAM)
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-whatis-concepts.html
+
+- You create templates to describe your AWS resources and their properties. 
+- Whenever you create a stack, CloudFormation provisions the resources that are described in your template.
+- template.yaml : CloudFormation uses these templates as blueprints for building your AWS resources. 
+- When you use CloudFormation, you manage related resources as a single unit called a stack.
+- All the resources in a stack are defined by the stack's CloudFormation template.
+- Change sets allow you to see how your changes might impact your running resources, especially for critical resources, before implementing them.
+
+- CloudFormation can only perform actions that you have permission to do.
+- You use AWS Identity and Access Management (IAM) to manage permissions.
+- CloudFormation allows you to create and manage Amazon Web Services infrastructure deployments predictably and repeatedly.
