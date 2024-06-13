@@ -5,15 +5,52 @@
     collwct store and analyse
 - Components
     S3 Objects
-        Objects contain data
+        Objects contain data i.e, are resources that represent data and is not infrastructure
         Objects may be of Key(name of the Object), Value(data in sequence of bytes)
-        Version Id
-        Metadata
+      In side Contents: 
+        Version Id - have multiple versions of a data file
+        Tag - benefits resource tagging but at the object level
+        locking - makes data files immutable
+        Metadata - attach data alongside the content, to describe the contents of the data
+        Etag - a way to detect when the contents of an object has changed without download the contents
+            : An entity tag is a response header repesents a hash of the object's contents
+            : reflects changes only to the contents of an object, not its metadata
+            : represents a specific version of an object
+            : value is generally represented by a hashing function eg. MDS or SHA-1
+            : part of HTTP protocol
+            : used for revalidation for caching systems
+            : useful if you want to programmatically detect content changes to S3 objects
+            : used to track changes
+        Checksums - ensures the integrity of a file being uploaded or downloaded.
+        Prefix - simulates file-system folders in a flat hierarchy
     S3 Buckets
         Holds Objects
         can also have folders which in turn hold Objects
-        S3 is a universal namespace so bucket names must be unique 
-            
+        S3 is a universal namespace so bucket names must be unique
+
+- Bucket Types
+   General Purpose Buckets
+      : Organizes data in a Flat Hierarchy
+      : original S3 ucket type (defalut)
+      : used with all storage classes except S3 Express One Zone
+      : defalut limit of 100 general buckets per account
+      : recommendaed for most use cases
+   Directory Buckets
+      : Organizes data Folder Hierarchy
+      : used with only one storage class - S3 Express One Zone
+      : defalut limit of 10 directory buckets per account
+      : recommended when you need single-digit millisecond performance on PUT and GET
+      : Individual directories can scale horizontally
+
+- Bucket folder: 
+      : S3 console allows you to "create folders" but S3 - General Purpose Buckets do not have true folders found in file hierarchy 
+      i.e, An object in a folder will have a prefix to represent the folder.
+      : S3 creates a zero-byte S3 object withh a name that ends in forward slash eg: myfolder/
+      : are not their own independent identities but just S3 Objects
+      : don't include metadat, permission
+      : don't contain anything, they can't be full or empty
+      : aren't "moved", S3 objects containing the same prefix are renamed
+
 - Capacity: 0 Bytes to 5 Terabytes in size
 
 - Pricing: [https://aws.amazon.com/s3/pricing/?nc=sn&loc=4]
