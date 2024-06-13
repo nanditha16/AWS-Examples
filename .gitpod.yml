@@ -41,5 +41,6 @@ tasks:
     before: |
      npm i -g aws-cdk
      cd s3/iac/cdk/
+     yarn add aws-cdk-lib
      cdk bootstrap 
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
