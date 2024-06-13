@@ -40,4 +40,5 @@ tasks:
   - name: cdk 
     before: |
      npm i -g aws-cdk
+     cd s3/iac/cdk/
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
