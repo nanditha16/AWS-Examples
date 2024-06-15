@@ -7,6 +7,11 @@
     S3 Objects
         Objects contain data i.e, are resources that represent data and is not infrastructure
         Objects may be of Key(name of the Object), Value(data in sequence of bytes)
+        Object Locks - at creation, used to prevent the deletion of the objects
+            - for fixed /indefinitely - policies : Retention periods and Legal holds 
+            - with egulation compliantt : SEC 17a-4, CTCC, and FINRA 
+            - Cannot be used as a destination buckets for server access log
+            - Can be done only via AWS API (CLI/SDK) 
       In side Contents: 
         Version Id - have multiple versions of a data file
         Tag - benefits resource tagging but at the object level
@@ -65,7 +70,27 @@
       : recommended when you need single-digit millisecond performance on PUT and GET
       : Individual directories can scale horizontally
 
-
+- (by REST API) 
+    - URI format - objects and buckets are referenced by their address in uri format
+    - Two possible endpoints when accessing Amazon S3 API 
+        Standard endpoint   
+            : Handles only IPV4 traffic
+            : https://s3.us-east-1.amazonaws.com
+        DualStack Endpoint 
+            : Handles both IPV4 amd IPV6 traffic 
+            : https://s3.dualstack.us-east-1.amazonaws.com
+        Other endpoints like - Static Website, FIPS, S3 Controls, Access Points
+    - S3 Request Styles (by REST API) 
+        Virtual Hosted-Style Request
+            : bucket name is a subdomain on the host 
+            Example: 
+                DELETE /test.txt HTTP/1.1
+                Host: aws-cs-practice-nan1.s3.us-east-1.aws.amazon.com
+        Path-Style Request (will be discontinued in future)
+            : The bucket name is in the request path
+            Example: 
+                DELETE /aws-cs-practice-nan1/test.txt HTTP/1.1
+                Host: s3.us-east-1.aws.amazon.com
 
 - Capacity: 0 Bytes to 5 Terabytes in size
 
@@ -77,41 +102,206 @@
         There are per-request ingest charges when using PUT, COPY, or lifecycle rules to move data into any S3 storage class, 
     how long you stored the objects during the month, and 
     the storage class— at object level
-        S3 Express One Zone
-            : Single-digit millisecond response times for the most frequently accessed data.
-            : Directory bucket type
-        S3 Standard
+        S3 Express One Zone 
+            : Consistent Single-digit millisecond response times for the most frequently accessed data.
+            : Special bucket type - One Availability Zone has real folder structure 
+                : Directory bucket type - simple real-folder structure (allowed 10 by default)
+            : Data Redundancy: Data stored in only 1 AZ
+            : Retrieval time: 10X faster than Standard
+            : Use cases:    
+                latentcy-sensitive applications i.e lowest latency cloud object storage
+            : Pricing: 
+                Flat per request charge for request sizes upto 512KB
+            : 50% less than Standard cost 
+        S3 Standard (default)
+            : Fast, available and durable
+            : general purpose storage for frequently accessed data 
+            : High durability : 11 - 9s (99.999999999%)
+            : High Availability : 4 - 9s (99.99%)
+            : Data Redundancy: Data stored in 3 or more AZs
+            : Retrieval time: within milliseconds (low latency)
+            : High Throughput: optimized for data that is frequently accessed and/or requires real-time access 
+            : Scalability: easily scales to store size and number of requests
+            : Use cases:    
+                content distribution
+                big data analytics,
+                mobile and gaming applications
+            : Pricing: 
+                Storage per GB
+                Per requests
+                No Retrieval fee
+                No minimum storage duration charge.
             : Frequently accessed data (more than once a month) with milliseconds access
         S3 Intelligent-Tiering
+            : Uses ML to analyze object usage and determine storage class. (Extra fee) 
             : Data with changing or unknown access patterns
-            : pay a monthly monitoring and automation charge per object stored to monitor access patterns and move objects between access tiers. 
-            : there are no retrieval charges, and no additional tiering charges apply when objects are moved between access tiers
-        S3 Standard-Infrequent Access
+            : automatically moves objects into different storage tiers to reduce storage costs, but charges 
+                a low month cost for object monitoring and automation 
+            : has access tiers: 
+                - Frequently Access tier (automatic)
+                    - default, object remain in here as long as they are being accessed 
+                - Infrequently Access tier (automatic) 
+                    - if object is not accessed after 30days its moved here 
+                - Archive Instance Access tier (automatic) 
+                    - if object is not accessed after 90days its moved here 
+                - Archive Access tier (optional) 
+                    - After activation, if object is not accessed after 90days its moved here 
+                - Deep Archive Access tier (optional) 
+                    - After activation, if object is not accessed after 180days its moved here 
+            : Pricing: 
+                : pay a monthly monitoring and automation charge per object stored to monitor access patterns and move objects between access tiers. 
+                : there are no retrieval charges, and no additional tiering charges apply when objects 
+                are moved between access tiers
+                : has additional cost of analyse your objcts for 30 days. 
+
+        S3 Standard-Infrequent Access[IA]
+            : Fast, cheaper if you access less than once a month
             : Infrequently accessed data (once a month) with milliseconds access
-            : min storgae duration - 30 days
-            : Min billable object size - 128 KB
-            : Retrieval fees - Per-GB fees apply
-        S3 One Zone-Infrequent Access
-            : Recreatable, infrequently accessed data (once a month) stored in a single Availability Zone with milliseconds access
-            : min storgae duration - 30 days
-            : Min billable object size - 128 KB
-            : Retrieval fees - Per-GB fees apply
+            : High durability : 11 - 9s (99.999999999%)
+            : High Availability : 3 - 9s (99.9%)
+            : Data Redundancy: Data stored in 3 or more AZs
+            : Retrieval time: within milliseconds (low latency)
+            : High Throughput: optimized for rapid access, although the data is accessed less frequently compared to S3 Standard
+            : Scalability: easily scales to store size and number of requests
+            : Use cases:    
+                accessed less frequently but requires quick access when needed
+                Disaster recovery
+                Backups
+            : Pricing: 
+                Storage per GB
+                Per requests
+                Has a Retrieval fee
+                    : Retrieval fees - Per-GB fees apply 
+                Has minimum storage duration charge.
+                    : min storgae duration - 30 days
+                    : Min billable object size - 128 KB
+            : 50% less than Standard cost (reduced Availability) as long as you dont access file more than a month
+        S3 One Zone-Infrequent Access[IA]
+            : Fast Objects only exists in one AZ. Data could get destroyed.
+            : Recreatable, infrequently accessed data (once a month) stored in a single Availability 
+                Zone with milliseconds access
+            : High durability : 11 - 9s (99.999999999%)
+            : High Availability : 99.5% 
+            : Data Redundancy: Data stored in only 1 AZs , risk of losing data
+            : Retrieval time: within milliseconds (low latency)
+            : High Throughput: optimized for rapid access, although the data is accessed less frequently compared to S3 Standard
+            : Scalability: easily scales to store size and number of requests
+            : Use cases:    
+                  Infrequently access data that are non mission-critical
+                Secondary Backup copies of on-premises data or 
+                    data that can be recreated in the event of an AZ failure.
+            : Pricing: 
+                Storage per GB
+                Per requests
+                Has a Retrieval fee
+                    : Retrieval fees - Per-GB fees apply 
+                Has minimum storage duration charge.
+                    : min storgae duration - 30 days
+                    : Min billable object size - 128 KB
+            : 20% less than Standard IA cost (reduced durability)
         S3 Glacier Instant Retrieval
+            : rarely accessed data that still needs immediate access in performance-sensitve use cases 
+            : get data instanty 
             : Long-lived archive data accessed once a quarter with instant retrieval in milliseconds
-            : min storgae duration - 90 days
-            : Min billable object size - 128 KB
-            : Retrieval fees - Per-GB fees apply
+            : Is not a seperate service and does not require a Vault 
+            : High durability : 11 - 9s (99.999999999%)
+            : High Availability : 3 - 9s (99.9%)
+            : Retrieval time: within milliseconds (low latency)
+            : Use cases:    
+                rarely accessed data that needs immediate access
+                Image hosting 
+                Online file-sharing applications
+                medical imaging and health records
+                new media assets 
+                satellite and aerial imaging 
+            : Pricing: 
+                Storage per GB
+                Per requests
+                Has a Retrieval fee
+                    : Retrieval fees - Per-GB fees apply 
+                Has minimum storage duration charge.
+                    : min storgae duration - 90 days
+                    : Min billable object size - 128 KB
+            : 68% less than Standard IA cost (for long lived data that is accessed once per quarter)
+    *   S3 Glacier "Vault". 
+            : Stand-alone service from S3 that uses vaults over buckets to store data long term 
+            : S3 Glacier is original vault service  
+                - It has vault control policies
+                - most interactions occur via the AWS CLI 
+            : S3 Glacier Deep Archive and S3 Glacier Flexible Retrieval used S3 Glacier "Vault" underneath. 
+            : S3 Glacier Instant Retrieval has NO attachment to S3 Glacier Vault
         S3 Glacier Flexible Retrieval (Formerly S3 Glacier)
             : Long-lived archive data accessed once a year with retrieval of minutes to hours
-            : min storgae duration - 90 days
-            : Retrieval fees - Per-GB fees apply
+            : combines S3 and Glacier into a single set of APIs.
+            : Archived objects will have additional 40KBs of data:
+                32KB for archive index and archive metadata information 
+                8KB for the name of the object 
+            : Retrieval time: 
+                Expediated (1-5min) - For urgent requests. Limited to 250MB archive size 
+                Standard (3-5 hrs) - default. No archive size limit
+                Bulk Retrieval(5-12 hrs) - even petabytes worth of data. No archive size limit
+            : Use cases:    
+                should store fewer and larger files instead of smaller files. 
+            : Pricing: 
+                Storage per GB
+                Per requests
+                Has a Retrieval fee
+                    : Retrieval fees - Per-GB fees apply 
+                Has minimum storage duration charge.
+                    : min storgae duration - 90 days
         S3 Glacier Deep Archive
-            : Long-lived archive data accessed less than once a year with retrieval of hours
-            : min storgae duration - 180 days
-            : Retrieval fees - Per-GB fees apply
-        Reduced redundancy
+            : lowest cost, takes 12hrs time. 
+            : combines S3 and Glacier into a single set of APIs.
+            : Is not a seperate service and does not require a Vault 
+            : Archived objects will have additional 40KBs of data:
+                32KB for archive index and archive metadata information 
+                8KB for the name of the object 
+            : Retrieval time: 
+                Standard (12-48 hrs) - default. No archive size limit
+                Bulk Retrieval(12-48 hrs) - even petabytes worth of data. No archive size limit
+            : Use cases:    
+                Long-lived archive data accessed
+            : Pricing: 
+                Storage per GB
+                Per requests
+                    8KB for the name of the object 
+                Has a Retrieval fee
+                    : Retrieval fees - Per-GB fees apply 
+                Has minimum storage duration charge.
+                    : min storgae duration - 180 days
+        S3 Reduced redundancy Storage [RRS] (legacy storage class)
             : Noncritical, frequently accessed data with milliseconds access (not recommended as S3 Standard is more cost effective)
             : Retrieval fees - Per-GB fees apply
+            : No cost-benifit and not recommended 
+    *   S3 outposts has its own storage class. 
+
+S3 AWS CLI
+    - aws s3 
+        High level way to interact with S3 buckets and objects
+            Example: 
+                aws s3 cp test.txt s3://aws-practice-nan1
+    - aws s3api
+        Low level way to interact with S3 buckets and objects
+            Example: 
+                aws s3api put-object \
+                --bucket aws-practice-nan1 \
+                --key test.txt  \
+                --body test.txt 
+    - aws s3control
+        Managing S3 access points, S3 outposts buckets, S3 batch operations, storage lens.
+            Example
+                aws s3control describe-job \
+                --account-id 123 \
+                --job-id sad-asd-asd
+    - aws s3outposts
+        Managing endpoints for S3 outposts
+            Example
+                aws s3outposts create-endpoint \
+                --outpost-id "op-21" \
+                --subnet-id "subnet-0sda" \
+                --security-group-id "sg-123" \
+                --access-type "Private" \
+                --customer-owned-ipv4-pool "ipv4pool-sds"
 
 - S3 AWS CLI samples basics [AWS_CLI_AUTO_PROMPT=on-partial]
     aws [options] s3 <subcommand> [parameters]
