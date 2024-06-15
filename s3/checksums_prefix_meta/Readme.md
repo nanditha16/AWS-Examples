@@ -45,20 +45,23 @@ aws s3api put-object \
 --bucket "aws-cs-practice-nan1" \
 --key "cs_file_crc32.txt" \
 --body "cs_file.txt" \
---metadata "crc32-checksum=719192522"
+--metadata "crc32-checksum=719192522,x-amz-meta-checksum-algo=crc32"
+
 
 aws s3api head-object --bucket aws-cs-practice-nan1 --key cs_file_crc32.txt
 ```
 <!-- {
     "AcceptRanges": "bytes",
-    "LastModified": "2024-06-15T18:07:55+00:00",
+    "LastModified": "2024-06-15T18:52:11+00:00",
     "ContentLength": 16,
     "ETag": "\"c7f5019704cc869c9e6b822e118c3ece\"",
     "ContentType": "binary/octet-stream",
     "ServerSideEncryption": "AES256",
     "Metadata": {
-        "crc32-checksum": "719192522"
+        "crc32-checksum": "719192522",
+        "x-amz-meta-checksum-algo": "crc32"
     }
+}
 } -->
 
 
@@ -121,3 +124,23 @@ esiGdLAy1gnWjs4csDEu8tmod/0tnJeMa/p9/GHl/dI=
     "ServerSideEncryption": "AES256",
     "Metadata": {}
 } -->
+
+
+## Create a folder structure 
+```sh
+aws s3api put-object \
+--bucket "aws-cs-practice-nan1" \
+--key "prefix-bucket-folder/" 
+
+aws s3api head-object --bucket aws-cs-practice-nan1 --key prefix-bucket-folder/
+```
+<!-- {
+    "AcceptRanges": "bytes",
+    "LastModified": "2024-06-15T18:24:26+00:00",
+    "ContentLength": 0,
+    "ETag": "\"d41d8cd98f00b204e9800998ecf8427e\"",
+    "ContentType": "binary/octet-stream",
+    "ServerSideEncryption": "AES256",
+    "Metadata": {}
+} -->
+

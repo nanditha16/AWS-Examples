@@ -12,6 +12,8 @@
         Tag - benefits resource tagging but at the object level
         locking - makes data files immutable
         Metadata - attach data alongside the content, to describe the contents of the data
+            : System defined (Content-Type, Cache control, content disposition, content-encoding, content-langugage etc)
+            : User defined (x-amz-meta-<any-user-defined-name>)
         Etag - a way to detect when the contents of an object has changed without download the contents
             : An entity tag is a response header repesents a hash of the object's contents
             : reflects changes only to the contents of an object, not its metadata
@@ -32,6 +34,18 @@
                 - SHA1 (Secure Hash algorithm)
                 - SHA256     
         Prefix - simulates file-system folders in a flat hierarchy
+            : string that proceeds the object filename and is part if the Object Key Name 
+            : Prefix are not true folders 
+            - Bucket folder: 
+                 : S3 console allows you to "create folders" but 
+                    S3 - General Purpose Buckets do not have true folders found in file hierarchy 
+                    i.e, An object in a folder will have a prefix to represent the folder.
+                 : S3 creates a zero-byte S3 object withh a name that ends in forward slash eg: myfolder/
+                 : are not their own independent identities but just S3 Objects
+                 : don't include metadat, permission
+                 : don't contain anything, they can't be full or empty
+                 : aren't "moved", S3 objects containing the same prefix are renamed
+
     S3 Buckets
         Holds Objects
         can also have folders which in turn hold Objects
@@ -51,14 +65,7 @@
       : recommended when you need single-digit millisecond performance on PUT and GET
       : Individual directories can scale horizontally
 
-- Bucket folder: 
-      : S3 console allows you to "create folders" but S3 - General Purpose Buckets do not have true folders found in file hierarchy 
-      i.e, An object in a folder will have a prefix to represent the folder.
-      : S3 creates a zero-byte S3 object withh a name that ends in forward slash eg: myfolder/
-      : are not their own independent identities but just S3 Objects
-      : don't include metadat, permission
-      : don't contain anything, they can't be full or empty
-      : aren't "moved", S3 objects containing the same prefix are renamed
+
 
 - Capacity: 0 Bytes to 5 Terabytes in size
 
