@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.4
+# https://docs.aws.amazon.com/powershell/latest/userguide/pstools-getting-set-up-linux-mac.html
+# https://docs.aws.amazon.com/powershell/latest/reference/
+
 sudo apt-get update
 sudo apt-get install -y wget apt-transport-https software-properties-common
 source /etc/os-release
